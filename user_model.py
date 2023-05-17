@@ -1,5 +1,2 @@
-
-
-
 def dummy_function():
-	return 0
+    return 0
