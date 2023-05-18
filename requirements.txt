@@ -3,3 +3,9 @@ pytest
 click
 black
 pytest-cov
+flask
+Flask-SQLAlchemy
+graphene
+flask_graphql
+flask_bcrypt
+cython
