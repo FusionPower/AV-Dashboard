@@ -1,5 +1,6 @@
 from flask import Flask, request, session, jsonify
-from models import User, db
+from user_models import User
+from database import db, bcrypt
 import utils
 
 # pylint: disable=fixme
@@ -9,6 +10,7 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////tmp/test.db"
 app.config["SECRET_KEY"] = "sample_dummy_secret_key"
 db.init_app(app)
+bcrypt.init_app(app)
 
 
 # @app.route("/delete_user", methods=["POST"])

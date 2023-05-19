@@ -1,4 +1,4 @@
-import models
+import user_models
 from user_routes import app
 
 # pylint: disable=fixme
@@ -6,7 +6,7 @@ from user_routes import app
 
 
 def test_models_password():
-    user = models.User()
+    user = user_models.User()
     user.set_password("password")
     assert user.check_password("password") is True
     assert user.check_password("not password") is False
@@ -14,27 +14,29 @@ def test_models_password():
 
 def test_add_user():
     with app.app_context():
-        models.db.create_all()
+        user_models.db.create_all()
 
-        user = models.User()
+        user = user_models.User()
         user.username = "test_user"
         user.email = "test@testing.com"
         user.set_password("password")
-        models.db.session.add(user)
-        models.db.session.commit()
-        assert models.User.query.filter_by(username="test_user").first() is not None
+        user_models.db.session.add(user)
+        user_models.db.session.commit()
         assert (
-            models.User.query.filter_by(username="test_user")
+            user_models.User.query.filter_by(username="test_user").first() is not None
+        )
+        assert (
+            user_models.User.query.filter_by(username="test_user")
             .first()
             .check_password("password")
             is True
         )
         assert (
-            models.User.query.filter_by(username="test_user")
+            user_models.User.query.filter_by(username="test_user")
             .first()
             .check_password("not password")
             is False
         )
-        models.db.session.delete(user)
-        models.db.session.commit()
-        assert models.User.query.filter_by(username="test_user").first() is None
+        user_models.db.session.delete(user)
+        user_models.db.session.commit()
+        assert user_models.User.query.filter_by(username="test_user").first() is None

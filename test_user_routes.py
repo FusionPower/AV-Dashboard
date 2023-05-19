@@ -4,7 +4,7 @@ import pytest
 
 from flask import json
 from user_routes import app
-from models import db
+from user_models import db
 
 
 # pylint: disable=redefined-outer-name

@@ -1,4 +1,5 @@
-from models import User, db
+from user_models import User
+from database import db
 from flask import current_app as app
 
 # pylint: disable=fixme
