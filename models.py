@@ -1,7 +1,7 @@
 from flask_bcrypt import Bcrypt
-from main import db
+from flask_sqlalchemy import SQLAlchemy
 
-
+db = SQLAlchemy()
 bcrypt = Bcrypt()
 
 

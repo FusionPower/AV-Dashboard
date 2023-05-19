@@ -1,5 +1,8 @@
 import models
-from main import db, app
+from user_routes import app
+
+# pylint: disable=fixme
+# TODO change db to test database
 
 
 def test_models_password():
@@ -11,7 +14,7 @@ def test_models_password():
 
 def test_add_user():
     with app.app_context():
-        db.create_all()
+        models.db.create_all()
 
         user = models.User()
         user.username = "test_user"
