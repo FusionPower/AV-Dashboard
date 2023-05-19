@@ -42,7 +42,7 @@ def create_user(username, email, password):
 def find_user(username=None, email=None):
     with app.app_context():
         # If both username and email are provided, check if they match
-        if email is not None and username is not None:
+        if email and username:
             email_user = User.query.filter_by(email=email).first()
             username_user = User.query.filter_by(username=username).first()
             if email_user == username_user:
@@ -52,9 +52,9 @@ def find_user(username=None, email=None):
                 return
 
         # If only one of them is provided, query user by that
-        elif email is not None:
+        elif email:
             user = User.query.filter_by(email=email).first()
-        elif username is not None:
+        elif username:
             user = User.query.filter_by(username=username).first()
         else:
             print("You need to provide either an email or a username.")
@@ -66,14 +66,14 @@ def find_user(username=None, email=None):
 def delete_user(username=None, email=None):
     with app.app_context():
         # Query user by email or username
-        if username is not None and email is not None:
+        if username and email:
             user = find_user(username=username, email=email)
             if user is None:
                 print("User not found.")
                 return
-        elif username is not None:
+        elif username:
             user = find_user(username=username)
-        elif email is not None:
+        elif email:
             user = find_user(email=email)
         else:
             print("You need to provide either an email or a username.")

@@ -4,7 +4,7 @@ from database import db
 # fmt: off
 
 
-class vehicle(db.Model):
+class Vehicle(db.Model):
     __tablename__ = "vehicle"
 
     id = db.Column(db.Integer, primary_key=True)

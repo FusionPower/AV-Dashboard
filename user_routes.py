@@ -1,7 +1,7 @@
 from flask import Flask, request, session, jsonify
 from user_models import User
 from database import db, bcrypt
-import utils
+import user_utils
 
 # pylint: disable=fixme
 # TODO - understand the error codes in the API (400, 500, etc.)
@@ -22,7 +22,7 @@ bcrypt.init_app(app)
 #     if not username and not email:
 #         return jsonify({"error": "Missing username or email"}), 400
 
-#     utils.delete_user(username=username, email=email)
+#     user_utils.delete_user(username=username, email=email)
 
 
 @app.route("/register", methods=["POST"])
@@ -35,8 +35,8 @@ def register():
     if not username or not password or not email:
         return jsonify({"error": "Invalid data"}), 400
 
-    utils.create_user(username, email, password)
-    user = utils.find_user(username=username, email=email)
+    user_utils.create_user(username, email, password)
+    user = user_utils.find_user(username=username, email=email)
     if not user:
         return jsonify({"error": "User could not be created"}), 500
 
@@ -51,7 +51,7 @@ def login():
 
     if not username or not password:
         return jsonify({"error": "Missing username or password"}), 400
-    if utils.find_user(username=username) is None:
+    if user_utils.find_user(username=username) is None:
         return jsonify({"error": "User not found"}), 404
 
     user = User.query.filter_by(username=username).first()
