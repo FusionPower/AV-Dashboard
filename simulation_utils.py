@@ -79,6 +79,7 @@ def create_simulation_type(
     db.session.commit()
 
     print(f"simulation type {new_type.name} created successfully.")
+    return new_type
 
 def get_simulation_type(simulation_type_id=None, simulation_type_name=None):
     if not simulation_type_id and not simulation_type_name:
@@ -155,6 +156,7 @@ def create_vehicle(
     db.session.commit()
 
     print(f"vehicle {new_vehicle.name} created successfully.")
+    return new_vehicle
 
 def get_vehicle(vehicle_id=None, vehicle_name=None):
     if not vehicle_id and not vehicle_name:
@@ -219,9 +221,10 @@ def create_simulation_config(
     db.session.commit()
 
     print(f"simulation config {new_config.id} created successfully.")
+    return new_config
 
-def get_simulation_config(simulation_config_id):
-    return SimulationConfig.query.filter_by(id=simulation_config_id)
+def get_simulation_config(simulation_config_id=None):
+    return SimulationConfig.query.filter_by(id=simulation_config_id).first()
 
 def update_simulation_config(simulation_config_id, **kwargs):
     # Check if simulation config exists
@@ -274,9 +277,10 @@ def create_simulation_result(
     db.session.commit()
 
     print(f"simulation result {new_result.id} created successfully.")
+    return new_result
 
-def get_simulation_result(simulation_result_id):
-    return SimulationResult.query.filter_by(id=simulation_result_id)
+def get_simulation_result(simulation_result_id=None):
+    return SimulationResult.query.filter_by(id=simulation_result_id).first()
 
 
 def update_simulation_result(simulation_result_id, **kwargs):
