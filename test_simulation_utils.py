@@ -1,5 +1,6 @@
 import simulation_utils
 from app import app
+from extensions import db
 import json
 
 
@@ -45,6 +46,9 @@ def test_simulation_type_utils():
     simulation_type_name = "test_simulation_type_name"
     description = "test_description"
     with app.app_context():
+        db.drop_all()
+        db.create_all()
+
         simulation_utils.create_simulation_type(simulation_type_name, description)
         
         # Check if the simulation type is in the database
@@ -71,6 +75,9 @@ def test_simulation_type_utils():
 
 def test_vehicle_utils():
     with app.app_context():
+        db.drop_all()
+        db.create_all()
+
         name = "test_vehicle_name"
         description = "test_vehicle_description"
         # the next data goes in a json file
