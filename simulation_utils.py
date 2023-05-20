@@ -4,7 +4,7 @@ from simulation_models import (
     SimulationType,
     Vehicle,
 )
-from database import db
+from extensions import db
 
 # pylint: disable=fixme
 # pylint: disable=unused-argument
@@ -65,6 +65,8 @@ def is_vehicle_data_clean(
     # Check if all data is provided
     return True, None
 
+# Simulation type utils
+
 def create_simulation_type(
     name,
     description
@@ -78,6 +80,38 @@ def create_simulation_type(
 
     print(f"simulation type {new_type.name} created successfully.")
 
+def get_simulation_type(simulation_type_id=None, simulation_type_name=None):
+    if not simulation_type_id and not simulation_type_name:
+        print("You need to provide either a simulation type id or a simulation type name.")
+        return
+    if simulation_type_id and simulation_type_name:
+        simulation_type = SimulationType.query.filter_by(id=simulation_type_id).first()
+        if simulation_type != SimulationType.query.filter_by(name=simulation_type_name).first():
+            print(f"simulation type {simulation_type_id} with name {simulation_type_name} does not exist.")
+            return
+        return simulation_type
+    if simulation_type_id:
+        return SimulationType.query.filter_by(id=simulation_type_id).first()
+    elif simulation_type_name:
+        return SimulationType.query.filter_by(name=simulation_type_name).first()
+
+def update_simulation_type(simulation_type_id=None, simulation_type_name=None, **kwargs):
+    if not simulation_type_id and not simulation_type_name:
+        print("You need to provide either a simulation type id or a simulation type name.")
+        return
+    
+    simulation_type = get_simulation_type(simulation_type_id, simulation_type_name)
+
+    if not simulation_type:
+        print(f"simulation type {simulation_type_id} does not exist.")
+        return
+    
+    for key, value in kwargs.items():
+        setattr(simulation_type, key, value)
+    db.session.commit()
+
+    print(f"simulation type {simulation_type.name} updated successfully")
+    
 
 def delete_simulation_type(simulation_type_id=None, simulation_type_name=None):
     if not simulation_type_id and not simulation_type_name:
@@ -93,6 +127,9 @@ def delete_simulation_type(simulation_type_id=None, simulation_type_name=None):
     db.session.commit()
 
     print(f"simulation type {simulation_type_name} deleted successfully.")
+
+
+# Vehicle utils
 
 def create_vehicle(
     name,
@@ -118,6 +155,29 @@ def create_vehicle(
     db.session.commit()
 
     print(f"vehicle {new_vehicle.name} created successfully.")
+
+def get_vehicle(vehicle_id=None, vehicle_name=None):
+    if not vehicle_id and not vehicle_name:
+        print("You need to provide either a vehicle id or a vehicle name.")
+        return
+    if vehicle_id and vehicle_name:
+        vehicle = Vehicle.query.filter_by(id=vehicle_id).first()
+        if vehicle == Vehicle.query.filter_by(name=vehicle_name).first():
+            return vehicle
+        print(f"vehicle {vehicle_id} with name {vehicle_name} does not exist.")
+        return
+    if vehicle_id:
+        return Vehicle.query.filter_by(id=vehicle_id).first()
+    elif vehicle_name:
+        return Vehicle.query.filter_by(name=vehicle_name).first()
+
+def delete_vehicle(vehicle_id):
+    vehicle = get_vehicle(vehicle_id)
+    db.session.delete(vehicle)
+    db.session.commit()
+
+
+# Simulation config utils
 
 def create_simulation_config(
         user_id,
@@ -182,6 +242,9 @@ def delete_simulation_config(simulation_config_id):
     config = get_simulation_config(simulation_config_id)
     db.session.delete(config)
     db.session.commit()
+
+
+# Simulation result utils
 
 def create_simulation_result(
         simulation_config_id,

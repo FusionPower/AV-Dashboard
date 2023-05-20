@@ -1,6 +1,7 @@
 import user_utils
-from user_routes import app
-from user_models import db
+from extensions import db
+from app import app
+
 
 # fmt: off
 

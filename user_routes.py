@@ -1,17 +1,13 @@
-from flask import Flask, request, session, jsonify
+from flask import Blueprint, request, session, jsonify
 from user_models import User
-from database import db, bcrypt
 import user_utils
 
 # pylint: disable=fixme
 # TODO - understand the error codes in the API (400, 500, etc.)
 
-app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////tmp/test.db"
-app.config["SECRET_KEY"] = "sample_dummy_secret_key"
-db.init_app(app)
-bcrypt.init_app(app)
+# create a blueprint for the user routes
 
+user_routes = Blueprint("user_routes", __name__)
 
 # @app.route("/delete_user", methods=["POST"])
 # def delete_user():
@@ -25,7 +21,7 @@ bcrypt.init_app(app)
 #     user_utils.delete_user(username=username, email=email)
 
 
-@app.route("/register", methods=["POST"])
+@user_routes.route("/register", methods=["POST"])
 def register():
     data = request.get_json()
     username = data.get("username")
@@ -43,7 +39,7 @@ def register():
     return jsonify({"success": "User registered successfully"}), 200
 
 
-@app.route("/login", methods=["POST"])
+@user_routes.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
     username = data.get("username")
@@ -60,7 +56,3 @@ def login():
 
     session["user_id"] = user.id
     return jsonify({"success": "Logged in successfully"}), 200
-
-
-if __name__ == "__main__":
-    app.run(debug=True)

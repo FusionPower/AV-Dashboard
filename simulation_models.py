@@ -1,8 +1,15 @@
 from datetime import datetime
-from database import db
+from extensions import db
 
 # fmt: off
 
+
+# Define association tables
+simulation_config_vehicle_association = db.Table(
+    "simulation_condig_vehicle_association",
+    db.Column("simulation_config_id", db.Integer, db.ForeignKey("simulation_config.id"), primary_key=True),
+    db.Column("vehicle_id", db.Integer, db.ForeignKey("vehicle.id"), primary_key=True)
+)
 
 class Vehicle(db.Model):
     __tablename__ = "vehicle"
@@ -37,7 +44,7 @@ class SimulationConfig(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     # One simulation can have many vehicles
-    vehicles = db.relationship("vehicle", backref="simulation_config", lazy=True)
+    vehicles = db.relationship("Vehicle", secondary=simulation_config_vehicle_association, backref="simulation_config")
 
     # These could be in SimulationType, but it seems to give more flexibility to have them here
     environmental_conditions = db.Column(db.JSON, nullable=False) # Weather, time of day, temperature, preassure, etc.

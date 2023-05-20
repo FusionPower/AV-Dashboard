@@ -1,5 +1,5 @@
 from user_models import User
-from database import db
+from extensions import db
 from flask import current_app as app
 
 # pylint: disable=fixme

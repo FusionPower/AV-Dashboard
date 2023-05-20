@@ -3,8 +3,8 @@ import tempfile
 import pytest
 
 from flask import json
-from user_routes import app
-from user_models import db
+from app import app
+from extensions import db
 
 
 # pylint: disable=redefined-outer-name
@@ -40,6 +40,7 @@ def test_register_and_login(test_client):
         content_type="application/json",
     )
 
+    print(response.data)
     # data = json.loads(response.data)
     assert response.status_code == 200
     assert b"successfully" in response.data

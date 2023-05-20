@@ -1,5 +1,5 @@
 import user_models
-from user_routes import app
+from app import app
 
 # pylint: disable=fixme
 # TODO change db to test database
