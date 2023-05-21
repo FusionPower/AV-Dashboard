@@ -63,7 +63,7 @@ def create_simulation_config():
     return simulation_utils.create_simulation_config(
         user_id,
         simulation_type_id,
-        [vehicle],
+        [vehicle.id],
         environmental_conditions,
         initial_conditions,
         physical_constants,
@@ -364,4 +364,3 @@ def test_simulation_result():
         assert (simulation_utils.get_simulation_result(simulation_result_id=simulation_result_id)) is None, (
             "get_simulation_result() by id should not return the test simulation result after deletion"
         )
-        

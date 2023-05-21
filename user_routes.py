@@ -1,5 +1,4 @@
 from flask import Blueprint, request, session, jsonify
-from user_models import User
 import user_utils
 
 # pylint: disable=fixme
@@ -31,8 +30,7 @@ def register():
     if not username or not password or not email:
         return jsonify({"error": "Invalid data"}), 400
 
-    user_utils.create_user(username, email, password)
-    user = user_utils.find_user(username=username, email=email)
+    user = user_utils.create_user(username, email, password)
     if not user:
         return jsonify({"error": "User could not be created"}), 500
 
@@ -50,7 +48,7 @@ def login():
     if user_utils.find_user(username=username) is None:
         return jsonify({"error": "User not found"}), 404
 
-    user = User.query.filter_by(username=username).first()
+    user = user_utils.find_user(username=username)
     if user is None or not user.check_password(password):
         return jsonify({"error": "Invalid username or password"}), 401
 

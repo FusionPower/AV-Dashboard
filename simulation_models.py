@@ -23,6 +23,14 @@ class Vehicle(db.Model):
 
     def __repr__(self):
         return f"<vehicle {self.name}>"
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "sensor_information": self.sensor_information,
+            "physical_properties": self.physical_properties,
+        }
 
 class SimulationType(db.Model):
     __tablename__ = "simulation_type"
@@ -34,6 +42,12 @@ class SimulationType(db.Model):
     def __repr__(self):
         return f"<SimulationType {self.name}>"
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+        }
 
 class SimulationConfig(db.Model):
     __tablename__ = "simulation_config"
@@ -59,6 +73,21 @@ class SimulationConfig(db.Model):
     def __repr__(self):
         return f"<SimulationConfig {self.id}>"
     
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "simulation_type_id": self.simulation_type_id,
+            "created_at": self.created_at,
+            "vehicles": [vehicle.id for vehicle in self.vehicles],
+            "environmental_conditions": self.environmental_conditions,
+            "initial_conditions": self.initial_conditions,
+            "physical_constants": self.physical_constants,
+            "time_settings": self.time_settings,
+            "traffic_rules": self.traffic_rules,
+            "success_definition": self.success_definition,
+        }
+    
 class SimulationResult(db.Model):
     __tablename__ = "simulation_result"
 
@@ -72,3 +101,14 @@ class SimulationResult(db.Model):
 
     def __repr__(self):
         return f"<SimulationResult {self.success}>"
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "simulation_config_id": self.simulation_config_id,
+            "finished_at": self.finished_at,
+            "success": self.success,
+            "navigation_data": self.navigation_data,
+            "safety_metrics": self.safety_metrics,
+            "vehicle_system_performance": self.vehicle_system_performance,
+        }

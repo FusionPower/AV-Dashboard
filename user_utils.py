@@ -37,6 +37,7 @@ def create_user(username, email, password):
         db.session.commit()
 
         print(f"User {username} created successfully.")
+        return user
 
 
 def find_user(username=None, email=None):

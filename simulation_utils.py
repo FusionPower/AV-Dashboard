@@ -65,8 +65,8 @@ def is_vehicle_data_clean(
     # Check if all data is provided
     return True, None
 
-# Simulation type utils
 
+# Simulation type utils
 def create_simulation_type(
     name,
     description
@@ -181,10 +181,20 @@ def delete_vehicle(vehicle_id):
 
 # Simulation config utils
 
+def get_vehicles_from_ids(vehicle_ids):
+    vehicles = []
+    for vehicle_id in vehicle_ids:
+        vehicle = get_vehicle(vehicle_id)
+        if not vehicle:
+            print(f"vehicle {vehicle_id} does not exist.")
+            return
+        vehicles.append(vehicle)
+    return vehicles
+
 def create_simulation_config(
         user_id,
         simulation_type_id,
-        vehicles,
+        vehicle_ids,
         environmental_conditions,
         initial_conditions,
         physical_constants,
@@ -193,6 +203,9 @@ def create_simulation_config(
         success_definition
         ):
 
+    # Get vehicles
+    vehicles = get_vehicles_from_ids(vehicle_ids)
+    
     is_clean, errors = is_simulation_config_data_clean(
         user_id,
         simulation_type_id,
@@ -236,6 +249,8 @@ def update_simulation_config(simulation_config_id, **kwargs):
     # Update simulation config
     config = get_simulation_config(simulation_config_id)
     for key, value in kwargs.items():
+        if key=="vehicles":
+            value = get_vehicles_from_ids(value)
         setattr(config, key, value)
     db.session.commit()
     print(f"simulation config {simulation_config_id} updated successfully.")
