@@ -42,10 +42,10 @@ jobs:
         make format
     - name: Lint with ESLint
       run: |
-	cd simulation_app
+        cd simulation_app
         npx eslint 'src/**'
     - name: Format with Prettier
       run: |
-      	cd simulation_app
+        cd simulation_app
         npx prettier --check 'src/**'
 
