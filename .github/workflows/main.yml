@@ -42,6 +42,10 @@ jobs:
       run: |
         node -v
         npm -v
+    - name: Test with npm
+      run: |
+        cd simulation_app
+        npm test
     - name: Lint with ESLint
       run: |
         cd simulation_app
