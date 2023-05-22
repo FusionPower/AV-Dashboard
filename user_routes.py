@@ -8,17 +8,6 @@ import user_utils
 
 user_routes = Blueprint("user_routes", __name__)
 
-# @app.route("/delete_user", methods=["POST"])
-# def delete_user():
-#     data = request.get_json()
-#     username = data.get("username")
-#     email = data.get("email")
-
-#     if not username and not email:
-#         return jsonify({"error": "Missing username or email"}), 400
-
-#     user_utils.delete_user(username=username, email=email)
-
 
 @user_routes.route("/register", methods=["POST"])
 def register():
@@ -54,3 +43,17 @@ def login():
 
     session["user_id"] = user.id
     return jsonify({"success": "Logged in successfully"}), 200
+
+@user_routes.route("/delete_user", methods=["DELETE"])
+def delete_user():
+    data = request.get_json()
+    username = data.get("username")
+    email = data.get("email")
+
+    if not username and not email:
+        return jsonify({"error": "Missing username or email"}), 400
+
+    user_utils.delete_user(username=username, email=email)
+
+    return jsonify({"success": "User deleted successfully"}), 200
+

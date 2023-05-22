@@ -6,6 +6,9 @@ pytest-cov
 flask
 Flask-SQLAlchemy
 graphene
-flask_graphql
+Flask-GraphQL==2.0.1
+graphql-core==2.2.1
+graphene==2.1.8
 flask_bcrypt
+graphene_sqlalchemy
 cython

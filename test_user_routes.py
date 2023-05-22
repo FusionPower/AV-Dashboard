@@ -40,7 +40,6 @@ def test_register_and_login(test_client):
         content_type="application/json",
     )
 
-    print(response.data)
     # data = json.loads(response.data)
     assert response.status_code == 200
     assert b"successfully" in response.data
@@ -61,3 +60,17 @@ def test_register_and_login(test_client):
 
     assert response.status_code == 200
     assert b" successfully" in response.data
+
+    # Delete
+    response = test_client.delete(
+        "/delete_user",
+        data=json.dumps(
+            {
+                "username": "test_user",
+                "email": "test@test.com",
+            }
+        ),
+        content_type="application/json",
+    )
+    assert response.status_code == 200
+
