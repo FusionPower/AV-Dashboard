@@ -49,4 +49,5 @@ jobs:
     - name: Format with Prettier
       run: |
         cd simulation_app
+        npx prettier --write .
         npx prettier --check .
