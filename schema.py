@@ -1,5 +1,6 @@
 from graphene import ObjectType, Field, String, Schema, Mutation
 from graphene_sqlalchemy import SQLAlchemyObjectType
+import json
 from extensions import db
 from user_models import User
 from simulation_models import (
@@ -297,7 +298,7 @@ class CreateSimulationConfig(Mutation):
         successDefinition,
     ):
         vehicles = []
-        for vehicleId in eval(vehicleIds):
+        for vehicleId in json.loads(vehicleIds):
             print(type(vehicleId))
             vehicle = db.session.query(Vehicle).filter_by(id=vehicleId).first()
             if vehicle:
@@ -356,7 +357,7 @@ class UpdateSimulationConfig(Mutation):
     ):
         vehicles = []
         if vehicleIds:
-            for vehicleId in eval(vehicleIds):
+            for vehicleId in json.loads(vehicleIds):
                 vehicle = db.session.query(Vehicle).filter_by(id=vehicleId).first()
                 if vehicle:
                     vehicles.append(vehicle)
@@ -458,6 +459,7 @@ class CreateSimulationResult(Mutation):
         ok = "Simulation Result Created"
         return CreateSimulationResult(simulation_result=new_simulation_result, ok=ok)
 
+
 class UpdateSimulationResult(Mutation):
     class Arguments:
         id = String(required=True)
@@ -466,31 +468,47 @@ class UpdateSimulationResult(Mutation):
         navigationData = String()
         safetyMetrics = String()
         vehicleSystemPerformance = String()
+
     ok = Field(String)
     simulation_result = Field(lambda: GQLSimulationResult)
 
     def mutate(
-            root,
-            info,
-            id,
-            simulationConfigId=None,
-            success=None,
-            navigationData=None,
-            safetyMetrics=None,
-            vehicleSystemPerformance=None,
+        root,
+        info,
+        id,
+        simulationConfigId=None,
+        success=None,
+        navigationData=None,
+        safetyMetrics=None,
+        vehicleSystemPerformance=None,
     ):
         simulation_result = db.session.query(SimulationResult).filter_by(id=id).first()
         if simulation_result:
-            simulation_result.simulation_config_id = simulationConfigId if simulationConfigId else simulation_result.simulation_config_id
-            simulation_result.success = success if success else simulation_result.success
-            simulation_result.navigation_data = navigationData if navigationData else simulation_result.navigation_data
-            simulation_result.safety_metrics = safetyMetrics if safetyMetrics else simulation_result.safety_metrics
-            simulation_result.vehicle_system_performance = vehicleSystemPerformance if vehicleSystemPerformance else simulation_result.vehicle_system_performance
+            simulation_result.simulation_config_id = (
+                simulationConfigId
+                if simulationConfigId
+                else simulation_result.simulation_config_id
+            )
+            simulation_result.success = (
+                success if success else simulation_result.success
+            )
+            simulation_result.navigation_data = (
+                navigationData if navigationData else simulation_result.navigation_data
+            )
+            simulation_result.safety_metrics = (
+                safetyMetrics if safetyMetrics else simulation_result.safety_metrics
+            )
+            simulation_result.vehicle_system_performance = (
+                vehicleSystemPerformance
+                if vehicleSystemPerformance
+                else simulation_result.vehicle_system_performance
+            )
             db.session.commit()
             ok = "Simulation Result Updated"
         else:
             ok = "Simulation Result Not Found"
         return UpdateSimulationResult(simulation_result=simulation_result, ok=ok)
+
 
 class DeleteSimulationResult(Mutation):
     class Arguments:
@@ -508,6 +526,7 @@ class DeleteSimulationResult(Mutation):
             ok = "Simulation Result Not Found"
         return DeleteSimulationResult(ok=ok)
 
+
 # App Mutations
 class AppMutation(ObjectType):
     create_user = CreateUser.Field()
@@ -523,5 +542,6 @@ class AppMutation(ObjectType):
     create_simulation_result = CreateSimulationResult.Field()
     update_simulation_result = UpdateSimulationResult.Field()
     delete_simulation_result = DeleteSimulationResult.Field()
+
 
 schema = Schema(query=Query, mutation=AppMutation)
