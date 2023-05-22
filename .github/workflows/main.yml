@@ -20,6 +20,17 @@ jobs:
     - name: Install dependencies
       run: |
         make install
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+	node-version: '14'
+    - name: Install Node.js dependencies
+      run: |
+	npm install
+    - name: Install Node.js dependencies
+      run: |
+	node -v
+	npm -v
     - name: Lint 
       run: |
         make lint
