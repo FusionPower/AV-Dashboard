@@ -17,26 +17,18 @@ jobs:
       with:
         python-version: 3.7.16
         
-    - name: Install dependencies
-      run: |
-        make install
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
         node-version: '14'
     - name: Install Node.js dependencies
       run: |
+        cd simulation_app
         npm install
     - name: Check Node.js and npm version
       run: |
         node -v
         npm -v
-    - name: Lint 
-      run: |
-        make lint
-    - name: Test with pytest
-      run: |
-        make test
     - name: Format code with Python black
       run: |
         make format
@@ -48,4 +40,14 @@ jobs:
       run: |
         cd simulation_app
         npx prettier --check 'src/**'
+    - name: Install dependencies
+      run: |
+        make install
+    - name: Lint 
+      run: |
+        make lint
+    - name: Test with pytest
+      run: |
+        make test
+
 
