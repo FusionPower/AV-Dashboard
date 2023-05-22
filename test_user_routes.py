@@ -73,4 +73,3 @@ def test_register_and_login(test_client):
         content_type="application/json",
     )
     assert response.status_code == 200
-

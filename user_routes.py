@@ -44,6 +44,7 @@ def login():
     session["user_id"] = user.id
     return jsonify({"success": "Logged in successfully"}), 200
 
+
 @user_routes.route("/delete_user", methods=["DELETE"])
 def delete_user():
     data = request.get_json()
@@ -56,4 +57,3 @@ def delete_user():
     user_utils.delete_user(username=username, email=email)
 
     return jsonify({"success": "User deleted successfully"}), 200
-

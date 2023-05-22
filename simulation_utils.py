@@ -6,8 +6,7 @@ from simulation_models import (
 )
 from extensions import db
 
-# pylint: disable=fixme
-# pylint: disable=unused-argument
+# pylint: disable=fixme,unused-argument,no-member
 # fmt: off
 
 def is_simulation_config_data_clean(

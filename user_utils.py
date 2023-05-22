@@ -2,7 +2,7 @@ from user_models import User
 from extensions import db
 from flask import current_app as app
 
-# pylint: disable=fixme
+# pylint: disable=fixme,no-member
 
 # TODO - Implement the following functions:
 # alter_user

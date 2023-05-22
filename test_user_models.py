@@ -1,7 +1,7 @@
 import user_models
 from app import app
 
-# pylint: disable=fixme
+# pylint: disable=fixme,no-member
 # TODO change db to test database
 
 

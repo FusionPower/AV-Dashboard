@@ -3,19 +3,20 @@ from graphene_sqlalchemy import SQLAlchemyObjectType
 from extensions import db
 from user_models import User
 
-# Define a UserType
+# pylint: disable=no-member,unused-argument,no-self-argument,
+
+
 class UserType(SQLAlchemyObjectType):
     class Meta:
         model = User
 
 
-# Define a query for users
 class Query(ObjectType):
     user = Field(UserType, id=String(), username=String())
 
     def resolve_user(parent, info, **args):
-        username = args.get('username')
-        user_id = args.get('id')
+        username = args.get("username")
+        user_id = args.get("id")
 
         if username is not None:
             return db.session.query(User).filter_by(username=username).first()
@@ -25,7 +26,7 @@ class Query(ObjectType):
 
         return None
 
-# Define a mutation for creating a user
+
 class CreateUser(Mutation):
     class Arguments:
         username = String(required=True)
@@ -44,19 +45,19 @@ class CreateUser(Mutation):
 
         ok = "User Created"
         return CreateUser(user=new_user, ok=ok)
-    
+
 
 class DeleteUser(Mutation):
     class Arguments:
         username = String()
-        email = String()        
+        email = String()
+
     ok = Field(String)
 
-    # Delete User Mutation
-    def mutate(root, info, username = None, email = None):
+    def mutate(root, info, username=None, email=None):
         if not username and not email:
-            raise Exception("Must provide either username or id")
-        
+            raise ValueError("Must provide either username or id")
+
         user = None
         if username:
             user = db.session.query(User).filter_by(username=username).first()
@@ -72,10 +73,9 @@ class DeleteUser(Mutation):
         return DeleteUser(ok=ok)
 
 
-# Define a mutation class with a field to be resolved
-class Mutation(ObjectType):
+class AppMutation(ObjectType):
     create_user = CreateUser.Field()
     delete_user = DeleteUser.Field()
 
-# Define a schema
-schema = Schema(query=Query, mutation=Mutation)
+
+schema = Schema(query=Query, mutation=AppMutation)

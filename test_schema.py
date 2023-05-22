@@ -1,4 +1,3 @@
-import pytest
 from graphene.test import Client
 from user_models import User
 from schema import schema
@@ -6,6 +5,7 @@ from extensions import db
 from app import app
 
 
+# pylint: disable=fixme,no-member
 # TODO make dummy database for testing
 
 
@@ -21,15 +21,11 @@ def test_create_user():
     # Set up Flask testing environment
     app.config["TESTING"] = True
     with app.app_context():
-        # Initialize database
         db.drop_all()
         db.create_all()
-
-        # Set up Graphene test client
         client = Client(schema)
-
-        # Run createUser mutation
-        executed = client.execute("""
+        executed = client.execute(
+            """
         mutation {
             createUser(username: "testuser", email: "testuser@email.com", password: "testpassword") {
                 ok
@@ -40,9 +36,9 @@ def test_create_user():
                 }
             }
         }
-        """)
+        """
+        )
 
-        # Check result
         assert executed == {
             "data": {
                 "createUser": {
@@ -50,29 +46,25 @@ def test_create_user():
                     "user": {
                         "id": "1",
                         "username": "testuser",
-                        "email": "testuser@email.com"
-                    }
+                        "email": "testuser@email.com",
+                    },
                 }
             }
         }
 
+
 def test_query_user():
-    # Set up Flask testing environment
     app.config["TESTING"] = True
 
     with app.app_context():
-        # Initialize database
         db.drop_all()
         db.create_all()
 
         add_test_user()
-
-        # Set up Graphene test client
         client = Client(schema)
 
-        # Run user query
         executed = client.execute(
-        """
+            """
             query {
                 user(id: "1") {
                     id
@@ -82,21 +74,19 @@ def test_query_user():
             }
         """
         )
-
-        # Check result
         assert executed == {
             "data": {
                 "user": {
                     "id": "1",
                     "username": "testuser",
-                    "email": "testuser@email.com"
+                    "email": "testuser@email.com",
                 }
             }
         }
 
+
 def test_delete_user():
     app.config["TESTING"] = True
-
     with app.app_context():
         db.drop_all()
         db.create_all()
@@ -113,13 +103,7 @@ def test_delete_user():
             }
             """
         )
-        assert executed == {
-            "data": {
-                "deleteUser": {
-                "ok": "User Deleted"
-                }
-            } 
-        }
+        assert executed == {"data": {"deleteUser": {"ok": "User Deleted"}}}
 
         # Test delete by email
         add_test_user()
@@ -132,13 +116,7 @@ def test_delete_user():
             }
             """
         )
-        assert executed == {
-            "data": {
-                "deleteUser": {
-                "ok": "User Deleted"
-                }
-            } 
-        }
+        assert executed == {"data": {"deleteUser": {"ok": "User Deleted"}}}
 
         # Test delete by username and email
         add_test_user()
@@ -151,13 +129,4 @@ def test_delete_user():
             }
             """
         )
-        assert executed == {
-            "data": {
-                "deleteUser": {
-                "ok": "User Deleted"
-                }
-            } 
-        }
-
-
-
+        assert executed == {"data": {"deleteUser": {"ok": "User Deleted"}}}
