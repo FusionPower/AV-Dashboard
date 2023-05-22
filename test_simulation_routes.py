@@ -8,11 +8,12 @@ from extensions import db
 
 # pylint: disable=redefined-outer-name
 
+
 @pytest.fixture
 def test_client():
     db_file_descriptor, app.config["DATABASE"] = tempfile.mkstemp()
     app.config["TESTING"] = True
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + app.config["DATABASE"]
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + app.config["DATABASE"]
 
     with app.test_client() as client:
         with app.app_context():
