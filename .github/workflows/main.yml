@@ -16,7 +16,20 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: 3.7.16
-        
+   
+    - name: Install dependencies
+      run: |
+        make install
+    - name: Format code with Python black
+      run: |
+        make format
+    - name: Lint 
+      run: |
+        make lint
+    - name: Test with pytest
+      run: |
+        make test
+
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
@@ -32,22 +45,8 @@ jobs:
     - name: Lint with ESLint
       run: |
         cd simulation_app
-        npx eslint 'src/**'
+        npx eslint .
     - name: Format with Prettier
       run: |
         cd simulation_app
-        npx prettier --check 'src/**'
-    - name: Install dependencies
-      run: |
-        make install
-    - name: Format code with Python black
-      run: |
-        make format
-    - name: Lint 
-      run: |
-        make lint
-    - name: Test with pytest
-      run: |
-        make test
-
-
+        npx prettier --check .
