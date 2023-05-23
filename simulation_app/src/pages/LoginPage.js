@@ -1,13 +1,21 @@
 import React, { useState } from 'react';
 import { useMutation, gql } from '@apollo/client';
-import { Container, TextField, Button, Typography } from '@mui/material';
+import { Container, TextField, Button, Typography, Alert } from '@mui/material';
 import { styled } from '@mui/system';
+import { useNavigate } from 'react-router-dom';
 
 // TODO handle errors
 
 export const LOGIN_USER = gql`
   mutation LoginUser($username: String!, $password: String!) {
-    loginUser(username: $username, password: $password)
+    loginUser(username: $username, password: $password) {
+      ok
+      user {
+        id
+        username
+        email
+      }
+    }
   }
 `;
 
@@ -37,12 +45,20 @@ function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loginUser, { loading, error, data }] = useMutation(LOGIN_USER);
+  const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try{
       const response = await loginUser({variables: {username, password}});
       console.log(response);
+      if (response.data.loginUser.ok === "Login Successful"){
+        navigate("/");
+      }
+      else{
+        setErrorMessage("Invalid credentials");
+      }
     } catch (error) {
       console.log(error);
     }
@@ -51,6 +67,7 @@ function LoginPage() {
   return (
     <StyledContainer>
       <Typography variant="h4" component="h1">Login</Typography>
+      {errorMessage && <Alert severity="error">{errorMessage}</Alert>} {/* Display error message conditionally */}
       <StyledForm onSubmit={handleSubmit}>
         <TextField
           id="username"

@@ -217,6 +217,43 @@ def test_delete_user():
         assert executed == {"data": {"deleteUser": {"ok": "User Deleted"}}}
         end_test(db_fd)
 
+def test_login():
+    app.config["TESTING"] = True
+    with app.app_context():
+        db_fd = config_test()
+        client = Client(schema)
+
+        add_test_user()
+        executed = client.execute(
+            """
+            mutation {
+                loginUser(username: "testuser", password: "testpassword") {
+                    ok
+                    user {
+                        id
+                        username
+                        email
+                    }
+                }
+            }
+            """
+        )
+
+        assert executed == {
+            "data": {
+                "loginUser": {
+                    "ok": "Login Successful",
+                    "user": {
+                        "id": "1",
+                        "username": "testuser",
+                        "email": "testuser@email.com",
+                    },
+                }
+            }
+        }
+        end_test(db_fd)
+
+
 
 def test_create_simulation_type():
     app.config["TESTING"] = True
@@ -253,42 +290,6 @@ def test_create_simulation_type():
         }
         end_test(db_fd)
 
-
-def test_login():
-    app.config["TESTING"] = True
-    with app.app_context():
-        db_fd = config_test()
-        client = Client(schema)
-
-        add_test_user()
-        executed = client.execute(
-            """
-            mutation {
-                loginUser(username: "testuser", password: "testpassword") {
-                    ok
-                    user {
-                        id
-                        username
-                        email
-                    }
-                }
-            }
-            """
-        )
-
-        assert executed == {
-            "data": {
-                "loginUser": {
-                    "ok": "Login Successful",
-                    "user": {
-                        "id": "1",
-                        "username": "testuser",
-                        "email": "testuser@email.com",
-                    },
-                }
-            }
-        }
-        end_test(db_fd)
 
 
 def test_query_simulation_type():
