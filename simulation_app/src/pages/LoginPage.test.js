@@ -5,7 +5,7 @@ import { MockedProvider } from '@apollo/client/testing';
 import { GraphQLError } from 'graphql';
 import LoginPage, { LOGIN_USER } from '../pages/LoginPage';
 import { screen } from '@testing-library/react';
-
+import { BrowserRouter as Router } from 'react-router-dom';
 
 global.console = {
     log: jest.fn(),
@@ -52,7 +52,9 @@ const mocks = [
 test("renders LoginPage and checks if form works correctly", async () => {
   const { getByLabelText, getByRole } = render(
     <MockedProvider mocks={mocks} addTypename={false}>
-      <LoginPage />
+      <Router>
+        <LoginPage />
+      </Router>
     </MockedProvider>
   );
 
@@ -85,7 +87,9 @@ test("renders LoginPage and checks if form works correctly", async () => {
 test("renders LoginPage and checks failed login", async () => {
   const { getByLabelText, getByRole } = render(
     <MockedProvider mocks={mocks} addTypename={false}>
-      <LoginPage />
+      <Router>
+        <LoginPage />
+      </Router>
     </MockedProvider>
   );
 
