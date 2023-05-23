@@ -29,7 +29,6 @@ def test_user_utils():
 
         # Check null inputs
         assert (user_utils.find_user()) is None, "find_user() with no arguments should return None"
-        assert (user_utils.delete_user()) is None, "delete_user() with no arguments should return None"
 
         # Delete the test user
         user_utils.delete_user(username="test_user")

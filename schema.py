@@ -9,6 +9,7 @@ from simulation_models import (
     SimulationResult,
     Vehicle,
 )
+import user_utils
 
 # pylint: disable=no-member,unused-argument,no-self-argument,redefined-builtin
 
@@ -39,7 +40,7 @@ class GQLVehicle(SQLAlchemyObjectType):
 
 
 class Query(ObjectType):
-    user = Field(GQLUser, id=String(), username=String())
+    user = Field(GQLUser, email=String(), username=String())
     simulation_type = Field(GQLSimulationType, id=String(), name=String())
     vehicle = Field(GQLVehicle, id=String(), name=String())
     simulation_config = Field(GQLSimulationConfig, id=String())
@@ -47,15 +48,9 @@ class Query(ObjectType):
 
     def resolve_user(parent, info, **args):
         username = args.get("username")
-        user_id = args.get("id")
-
-        if username is not None:
-            return db.session.query(User).filter_by(username=username).first()
-
-        if user_id is not None:
-            return db.session.query(User).filter_by(id=user_id).first()
-
-        return None
+        email = args.get("email")
+        username = user_utils.find_user(username=username, email=email)
+        return username
 
     def resolve_simulation_type(parent, info, **args):
         name = args.get("name")
@@ -115,13 +110,7 @@ class CreateUser(Mutation):
     user = Field(lambda: GQLUser)
 
     def mutate(root, info, username, email, password):
-        new_user = User(username=username, email=email)
-        new_user.set_password(password)
-
-        db.session.add(new_user)
-        db.session.commit()
-
-        ok = "User Created"
+        new_user, ok = user_utils.create_user(username, email, password)
         return CreateUser(user=new_user, ok=ok)
 
 
@@ -133,22 +122,25 @@ class DeleteUser(Mutation):
     ok = Field(String)
 
     def mutate(root, info, username=None, email=None):
-        if not username and not email:
-            raise ValueError("Must provide either username or id")
-
-        user = None
-        if username:
-            user = db.session.query(User).filter_by(username=username).first()
-        elif email:
-            user = db.session.query(User).filter_by(email=email).first()
-
-        if user:
-            db.session.delete(user)
-            db.session.commit()
-            ok = "User Deleted"
-        else:
-            ok = "User Not Found"
+        ok = user_utils.delete_user(username=username, email=email)
         return DeleteUser(ok=ok)
+
+
+class Login(Mutation):
+    class Arguments:
+        username = String(required=True)
+        password = String(required=True)
+
+    ok = Field(String)
+    user = Field(lambda: GQLUser)
+
+    def mutate(root, info, username, password):
+        user = user_utils.login(username, password)
+        if user:
+            ok = "Login Successful"
+        else:
+            ok = "Login Failed"
+        return Login(user=user, ok=ok)
 
 
 # Simulation Type Mutations
@@ -531,6 +523,7 @@ class DeleteSimulationResult(Mutation):
 class AppMutation(ObjectType):
     create_user = CreateUser.Field()
     delete_user = DeleteUser.Field()
+    login = Login.Field()
     create_simulation_type = CreateSimulationType.Field()
     update_simulation_type = UpdateSimulationType.Field()
     delete_simulation_type = DeleteSimulationType.Field()

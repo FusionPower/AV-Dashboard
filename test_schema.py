@@ -123,6 +123,8 @@ def test_create_user():
         """
         )
 
+        print(executed)
+
         assert executed == {
             "data": {
                 "createUser": {
@@ -149,7 +151,7 @@ def test_query_user():
         executed = client.execute(
             """
             query {
-                user(id: "1") {
+                user(email: "testuser@email.com") {
                     id
                     username
                     email
@@ -245,6 +247,43 @@ def test_create_simulation_type():
                         "id": "1",
                         "name": "Test Simulation",
                         "description": "testdescription",
+                    },
+                }
+            }
+        }
+        end_test(db_fd)
+
+
+def test_login():
+    app.config["TESTING"] = True
+    with app.app_context():
+        db_fd = config_test()
+        client = Client(schema)
+
+        add_test_user()
+        executed = client.execute(
+            """
+            mutation {
+                login(username: "testuser", password: "testpassword") {
+                    ok
+                    user {
+                        id
+                        username
+                        email
+                    }
+                }
+            }
+            """
+        )
+
+        assert executed == {
+            "data": {
+                "login": {
+                    "ok": "Login Successful",
+                    "user": {
+                        "id": "1",
+                        "username": "testuser",
+                        "email": "testuser@email.com",
                     },
                 }
             }
