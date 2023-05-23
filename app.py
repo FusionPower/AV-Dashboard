@@ -4,8 +4,10 @@ from extensions import db, bcrypt
 from simulation_routes import simulation_routes
 from flask_graphql import GraphQLView
 from schema import schema
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app, origins=["http://localhost:3000"])
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////tmp/test.db"
 app.config["SECRET_KEY"] = "sample_dummy_secret_key"
 app.add_url_rule(

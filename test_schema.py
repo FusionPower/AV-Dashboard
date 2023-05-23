@@ -264,7 +264,7 @@ def test_login():
         executed = client.execute(
             """
             mutation {
-                login(username: "testuser", password: "testpassword") {
+                loginUser(username: "testuser", password: "testpassword") {
                     ok
                     user {
                         id
@@ -278,7 +278,7 @@ def test_login():
 
         assert executed == {
             "data": {
-                "login": {
+                "loginUser": {
                     "ok": "Login Successful",
                     "user": {
                         "id": "1",

@@ -3,11 +3,12 @@ import { useMutation, gql } from '@apollo/client';
 import { Container, TextField, Button, Typography } from '@mui/material';
 import { styled } from '@mui/system';
 
+// TODO handle errors
 
-const QUERY_USER = gql`
-  type Mutation {
-    loginUser(username: String!, password: String!): String!
-}
+export const LOGIN_USER = gql`
+  mutation LoginUser($username: String!, $password: String!) {
+    loginUser(username: $username, password: $password)
+  }
 `;
 
 
@@ -32,19 +33,28 @@ const StyledButton = styled(Button)({
 
 
 function LoginPage() {
+  
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  
-  const handleSubmit = event => {
-    event.preventDefault();
+  const [loginUser, { loading, error, data }] = useMutation(LOGIN_USER);
 
-    // submit the registration data (username, email, password)
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try{
+      const response = await loginUser({variables: {username, password}});
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+
   };
   return (
     <StyledContainer>
       <Typography variant="h4" component="h1">Login</Typography>
       <StyledForm onSubmit={handleSubmit}>
         <TextField
+          id="username"
+          name="username"
           label="Username"
           variant="outlined"
           value={username}
@@ -54,6 +64,8 @@ function LoginPage() {
           margin="normal"
         />
         <TextField
+          id="password"
+          name="password"
           label="Password"
           variant="outlined"
           value={password}

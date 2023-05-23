@@ -126,7 +126,7 @@ class DeleteUser(Mutation):
         return DeleteUser(ok=ok)
 
 
-class Login(Mutation):
+class LoginUser(Mutation):
     class Arguments:
         username = String(required=True)
         password = String(required=True)
@@ -140,7 +140,7 @@ class Login(Mutation):
             ok = "Login Successful"
         else:
             ok = "Login Failed"
-        return Login(user=user, ok=ok)
+        return LoginUser(user=user, ok=ok)
 
 
 # Simulation Type Mutations
@@ -523,7 +523,7 @@ class DeleteSimulationResult(Mutation):
 class AppMutation(ObjectType):
     create_user = CreateUser.Field()
     delete_user = DeleteUser.Field()
-    login = Login.Field()
+    login_user = LoginUser.Field()
     create_simulation_type = CreateSimulationType.Field()
     update_simulation_type = UpdateSimulationType.Field()
     delete_simulation_type = DeleteSimulationType.Field()

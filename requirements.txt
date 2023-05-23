@@ -12,3 +12,4 @@ graphene==2.1.8
 flask_bcrypt
 graphene_sqlalchemy
 cython
+flask-cors
