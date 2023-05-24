@@ -6,6 +6,7 @@ import Header from './Header';
 import Footer from './Footer';
 import HomePage from "./pages/HomePage";
 import RegistrationPage from "./pages/RegistrationPage";
+import SimulationPage from "./pages/SimulationPage";
 import LoginPage from "./pages/LoginPage";
 import "./App.css";
 import UserContext from "./UserContext"
@@ -24,6 +25,7 @@ function App() {
             <Routes>
               <Route path="/register" element={<RegistrationPage />} />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/simulations" element={<SimulationPage />} />
               <Route path="/" element={<HomePage />} />
             </Routes>
             <Footer />

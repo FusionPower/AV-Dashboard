@@ -54,7 +54,7 @@ function LoginPage() {
       const response = await loginUser({variables: {username, password}});
       console.log(response);
       if (response.data.loginUser.ok === "Login Successful"){
-        navigate("/");
+        navigate("/simulations");
       }
       else{
         setErrorMessage("Invalid credentials");
