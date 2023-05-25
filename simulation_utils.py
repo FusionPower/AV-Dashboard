@@ -65,6 +65,11 @@ def is_vehicle_data_clean(
     return True, None
 
 
+def get_all_simulation_types():
+    # Query all users
+    return SimulationType.query.all()
+
+
 # Simulation type utils
 def create_simulation_type(
     name,
@@ -130,6 +135,9 @@ def delete_simulation_type(simulation_type_id=None, simulation_type_name=None):
 
 
 # Vehicle utils
+
+def get_all_vehicles():
+    return Vehicle.query.all()
 
 def create_vehicle(
     name,
@@ -235,6 +243,10 @@ def create_simulation_config(
     print(f"simulation config {new_config.id} created successfully.")
     return new_config
 
+
+def get_all_simulation_configs():
+    return SimulationConfig.query.all()
+
 def get_simulation_config(simulation_config_id=None):
     return SimulationConfig.query.filter_by(id=simulation_config_id).first()
 
@@ -296,6 +308,8 @@ def create_simulation_result(
 def get_simulation_result(simulation_result_id=None):
     return SimulationResult.query.filter_by(id=simulation_result_id).first()
 
+def get_all_simulation_results():
+    return SimulationResult.query.all()
 
 def update_simulation_result(simulation_result_id, **kwargs):
     # Check if simulation result exists

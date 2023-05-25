@@ -1,4 +1,4 @@
-from graphene import ObjectType, Field, String, Schema, Mutation
+from graphene import ObjectType, Field, String, Schema, Mutation, List
 from graphene_sqlalchemy import SQLAlchemyObjectType
 import json
 from extensions import db
@@ -10,7 +10,7 @@ from simulation_models import (
     Vehicle,
 )
 import user_utils
-
+import simulation_utils
 # pylint: disable=no-member,unused-argument,no-self-argument,redefined-builtin
 
 
@@ -45,6 +45,13 @@ class Query(ObjectType):
     vehicle = Field(GQLVehicle, id=String(), name=String())
     simulation_config = Field(GQLSimulationConfig, id=String())
     simulation_result = Field(GQLSimulationResult, id=String())
+
+    # Query all
+    users = List(GQLUser)
+    simulation_types = List(GQLSimulationType)
+    simulation_configs = List(GQLSimulationConfig)
+    vehicles = List(GQLVehicle)
+    simulation_results = List(GQLSimulationResult)
 
     def resolve_user(parent, info, **args):
         username = args.get("username")
@@ -97,6 +104,21 @@ class Query(ObjectType):
                 .first()
             )
         return None
+    
+    def resolve_users(parent, info):
+        return user_utils.get_all_users()
+    
+    def resolve_simulation_types(parent, info):
+        return simulation_utils.get_all_simulation_types()
+    
+    def resolve_simulation_configs(parent, info):
+        return simulation_utils.get_all_simulation_configs()
+    
+    def resolve_vehicles(parent, info):
+        return simulation_utils.get_all_vehicles()
+    
+    def resolve_simulation_results(parent, info):
+        return simulation_utils.get_all_simulation_results()
 
 
 # User Mutations
@@ -290,10 +312,18 @@ class CreateSimulationConfig(Mutation):
         successDefinition,
     ):
         vehicles = []
-        for vehicleId in json.loads(vehicleIds):
-            print(type(vehicleId))
-            vehicle = db.session.query(Vehicle).filter_by(id=vehicleId).first()
-            if vehicle:
+
+        if type(json.loads(vehicleIds)) == list:
+            for vehicleId in json.loads(vehicleIds):
+                vehicle = db.session.query(Vehicle).filter_by(id=vehicleId).first()
+                if vehicle:
+                    vehicles.append(vehicle)
+                else:
+                    raise ValueError("Vehicle not found")
+        if type(json.loads(vehicleIds)) == int:
+            vehicleId = json.loads(vehicleIds)
+            vehicle = db.session.query(Vehicle).filter_by(id=vehicleId).first() 
+            if  vehicle:
                 vehicles.append(vehicle)
             else:
                 raise ValueError("Vehicle not found")

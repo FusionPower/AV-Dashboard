@@ -10,9 +10,7 @@ from flask import current_app as app
 
 def get_all_users():
     with app.app_context():
-        # Query all users
         users = User.query.all()
-
         return users
 
 
