@@ -1,6 +1,33 @@
 import React, { useState, useEffect } from "react";
 import { useQuery, useMutation, gql } from '@apollo/client';
 import "../Styles.css";
+import { Button, Container, Typography, TextField, Select, MenuItem, FormControl, InputLabel, Box } from '@mui/material';
+import { styled } from '@mui/system';
+import ReactJson from 'react-json-view';
+
+
+const useStyles = styled((theme) => ({
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
+  },
+}));
+
+const StyledContainer = styled(Container)({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: '100vh',
+  backgroundColor: '#f5f5f5',
+});
+
+const StyledButton = styled(Button)({
+  marginTop: '20px',
+});
 
 
 const SIMULATION_TYPES_QUERY = gql`
@@ -55,6 +82,7 @@ const SIMULATION_RESULTS_QUERY = gql`
   query SimulationResults {
     simulationResults {
       id
+      simulationConfigId
       success
       navigationData
       safetyMetrics
@@ -86,6 +114,8 @@ const CREATE_SIMULATION_RESULT = gql`
 `;
 
 function SimulationPage() {
+    const classes = useStyles();
+
     const { loading, error, data } = useQuery(SIMULATION_TYPES_QUERY);
     const [createSimulationType, { data: mutationData }] = useMutation(CREATE_SIMULATION_TYPE_MUTATION);
     const [createSimulationConfig, { data: mutationDataConfig }] = useMutation(CREATE_SIMULATION_CONFIG);
@@ -96,6 +126,7 @@ function SimulationPage() {
     const [selectedTypeId, setSelectedTypeId] = useState(1);
     
     
+    const [submitClickCount, setSubmitClickCount] = useState(0);
 
     const [clickCount, setClickCount] = useState(0);
 
@@ -125,7 +156,7 @@ function SimulationPage() {
 
 
     const { loading: loadingResults, error: errorResults, data: dataResults } = useQuery(SIMULATION_RESULTS_QUERY);
-    const [selectedResultsId, setSelectedResultsId] = useState(null)
+    const [selectedResultsId, setSelectedResultsId] = useState(null);
 
     useEffect(() => {
       if (dataUsers && dataUsers.users && dataUsers.users.length > 0) {
@@ -180,10 +211,14 @@ function SimulationPage() {
     };
 
     const submitResult = async () => {
-      console.log(selectedConfig);
-      const response = await createSimulationResult({ variables: { simulationConfigId: selectedConfig.toString(), success: jsonFields.success, navigationData: jsonFields.navigationData, safetyMetrics: jsonFields.safetyMetrics,  vehicleSystemPerformance: jsonFields.vehicleSystemPerformance}});
-      console.log(response.data); 
-
+      if (submitClickCount === 0) {
+        const response = await createSimulationResult({ variables: { simulationConfigId: selectedConfig.toString(), success: jsonFields.success, navigationData: jsonFields.navigationData, safetyMetrics: jsonFields.safetyMetrics,  vehicleSystemPerformance: jsonFields.vehicleSystemPerformance}});
+        console.log(response.data); // check the response
+        setSubmitClickCount(submitClickCount + 1);
+      }
+      if (submitClickCount === 1){
+        setSubmitClickCount(0);
+      }
     };
 
     const handleNextClick = async () => {
@@ -239,9 +274,9 @@ function SimulationPage() {
       };
       
   return (
-    <div className="container">
-      <div className="header-title">Simulation Dashboard</div>
-      <h1 className="block-hero-header">Ready to create or review your simulation?</h1>
+    <StyledContainer>
+      <Typography variant="h2" component="h1">Simulation Dashboard</Typography>
+      <Typography variant="h5" component="h2">Ready to create or review your simulation?</Typography>
 
       <div className="button-container">
         <div 
@@ -254,7 +289,7 @@ function SimulationPage() {
           className={currentHover === "uploadResult" ? "button-hover" : "button"}
           onMouseEnter={() => setCurrentHover("uploadResult")}
         >
-          Review a result
+          Upload a result
         </div>
         <div
           className={currentHover === "review" ? "button-hover" : "button"}
@@ -265,174 +300,212 @@ function SimulationPage() {
       </div>
 
       {currentHover === "create" && (
-        <>
+        <Box>
           {clickCount == 0 && createMode ? (
-            <>
-              <input 
-                type="text" 
-                placeholder="Simulation type name" 
+            <Box>
+              <TextField
+                label="Simulation type name"
+                variant="outlined"
                 value={typeName}
-                onChange={e => setTypeName(e.target.value)}
+                onChange={(e) => setTypeName(e.target.value)}
+                fullWidth
+                margin="normal"
               />
-              <textarea 
-                placeholder="Description"
+              <TextField
+                label="Description"
+                multiline
+                rows={4}
+                variant="outlined"
                 value={description}
-                onChange={e => setDescription(e.target.value)}
+                onChange={(e) => setDescription(e.target.value)}
+                fullWidth
+                margin="normal"
               />
-              <button onClick={() => setCreateMode(false)}>Select Simulation Type</button>
-            </>
+              <StyledButton onClick={() => setCreateMode(false)}>Select Simulation Type</StyledButton>
+            </Box>
           ) : clickCount == 0 && !createMode ? (
-            <>
-                <select  
-                    value={selectedTypeId}
-                    onChange={(e) => setSelectedTypeId(e.target.value)}
+            <Box>
+              <FormControl fullWidth variant="outlined" margin="normal">
+                <InputLabel>Simulation Type</InputLabel>
+                <Select
+                  value={selectedTypeId}
+                  onChange={(e) => setSelectedTypeId(e.target.value)}
+                  label="Simulation Type"
                 >
-                    {data.simulationTypes.map(type => (
-                    <option key={type.id} value={type.id}>{type.name}</option>
-                    ))}
-                </select>
-              <button onClick={() => setCreateMode(true)}>Create Simulation Type</button>
-            </>
+                  {data.simulationTypes.map((type) => (
+                    <MenuItem key={type.id} value={type.id}>
+                      {type.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <StyledButton onClick={() => setCreateMode(true)}>Create Simulation Type</StyledButton>
+            </Box>
           ) : clickCount == 1 ? (
             <>
-              <div>
-                  Simulation Type: {selectedTypeId} {selectedUserId} 1
-              </div>
-              <div>
-                Vehicle:
-                <select  
+              <Box>
+                <Typography variant="h6">
+                  Simulation Type: {selectedTypeId}
+                </Typography>
+                <FormControl fullWidth variant="outlined" margin="normal">
+                  <InputLabel>Vehicle</InputLabel>
+                  <Select
                     value={selectedVehicle}
                     onChange={(e) => setSelectedVehicle(e.target.value)}
-                >
-                    {dataVehicles.vehicles.map(type => (
-                    <option key={type.id} value={type.id}>{type.name}</option>
+                    label="Vehicle"
+                  >
+                    {dataVehicles.vehicles.map((type) => (
+                      <MenuItem key={type.id} value={type.id}>
+                        {type.name}
+                      </MenuItem>
                     ))}
-                </select>
-                <div>
-                User_id:
-                <select  
-                  value={selectedUserId}
+                  </Select>
+                </FormControl>
+                <FormControl fullWidth variant="outlined" margin="normal">
+                  <InputLabel>User ID</InputLabel>
+                  <Select
+                    value={selectedUserId}
                     onChange={(e) => setSelectedUserId(e.target.value)}
-                >
-                    {dataUsers.users.map(type => (
-                    <option key={type.id} value={type.id}>{type.id}</option>
+                    label="User ID"
+                  >
+                    {dataUsers.users.map((type) => (
+                      <MenuItem key={type.id} value={type.id}>
+                        {type.id}
+                      </MenuItem>
                     ))}
-                </select>
-                </div>
-                <div>
-                    Environmental Conditions:
-                    <input type="file" onChange={(e) => handleFileUpload(e, "environmentalConditions")} />
-                  </div>
-                  <div>
-                    Initial Conditions:
-                    <input type="file" onChange={(e) => handleFileUpload(e, "initialConditions")} />
-                  </div>
-                  <div>
-                    Physical Conditions:
-                    <input type="file" onChange={(e) => handleFileUpload(e, "physicalConstants")} />
-                  </div>
-                  <div>
-                    Time Settings:
-                    <input type="file" onChange={(e) => handleFileUpload(e, "timeSettings")} />
-                  </div>
-                  <div>
-                    Traffic Rules:
-                    <input type="file" onChange={(e) => handleFileUpload(e, "trafficRules")} />
-                  </div>
-                  <div>
-                    Success Definition:
-                    <input type="file" onChange={(e) => handleFileUpload(e, "successDefinition")} />
-                  </div>             
-              </div>
-              <button onClick={() => setCreateMode(false)}>Select Existing config</button>
+                  </Select>
+                </FormControl>
+                <Box>
+                  <Typography variant="body1">Environmental Conditions:</Typography>
+                  <input type="file" onChange={(e) => handleFileUpload(e, "environmentalConditions")} />
+                </Box>
+                <Box>
+                  <Typography variant="body1">Initial Conditions:</Typography>
+                  <input type="file" onChange={(e) => handleFileUpload(e, "initialConditions")} />
+                </Box>
+                <Box>
+                  <Typography variant="body1">Physical Conditions:</Typography>
+                  <input type="file" onChange={(e) => handleFileUpload(e, "physicalConstants")} />
+                </Box>
+                <Box>
+                  <Typography variant="body1">Time Settings:</Typography>
+                  <input type="file" onChange={(e) => handleFileUpload(e, "timeSettings")} />
+                </Box>
+                <Box>
+                  <Typography variant="body1">Traffic Rules:</Typography>
+                  <input type="file" onChange={(e) => handleFileUpload(e, "trafficRules")} />
+                </Box>
+                <Box>
+                  <Typography variant="body1">Success Definition:</Typography>
+                  <input type="file" onChange={(e) => handleFileUpload(e, "successDefinition")} />
+                </Box>
+              </Box>
             </>
           ) : clickCount == 2 && (
-            <>
-              <div>
-                Simulaiton Created Successfully!
-              </div>
-            </>
-            
+            <Typography variant="h6" color="success">
+              Simulation Created Successfully!
+            </Typography>
+                
           )}
-          <button onClick={handleNextClick}>
-            {clickCount== 1 ? "Submit" : clickCount==0  ? "Next" : "Create Another Simualtion"}
-          </button>
-        </>
+          <StyledButton onClick={handleNextClick}>
+            {clickCount == 1 ? "Submit" : clickCount == 0  ? "Next" : "Create Another Simulation"}
+          </StyledButton>
+        </Box>
       )}
-      {currentHover === "uploadResult" &&
-        <>
-            <div>
-              Simulation Configuration:
-              <select  
+      {currentHover === "uploadResult" && (
+        submitClickCount == 0 ? ( 
+          <Box>
+            <FormControl fullWidth variant="outlined" margin="normal">
+              <InputLabel>Simulation Configuration</InputLabel>
+              <Select
                 value={selectedConfig}
-                  onChange={(e) => setSelectedConfig(e.target.value)}
+                onChange={(e) => setSelectedConfig(e.target.value)}
+                label="Simulation Configuration"
               >
-                  {dataConfig.simulationConfigs.map(type => (
-                  <option key={type.id} value={type.id}>{type.id}</option>
-                  ))}
-              </select>
-            </div>
-            <div>
-              Success:
+                {dataConfig.simulationConfigs.map((config) => (
+                  <MenuItem key={config.id} value={config.id}>
+                    {config.id}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <Box>
+              <Typography variant="body1">Success:</Typography>
               <input type="file" onChange={(e) => handleFileUpload(e, "success")} />
-            </div>
-            <div>
-              Navigation Data:
+            </Box>
+            <Box>
+              <Typography variant="body1">Navigation Data:</Typography>
               <input type="file" onChange={(e) => handleFileUpload(e, "navigationData")} />
-            </div>
-            <div>
-              Safety Metrics:
+            </Box>
+            <Box>
+              <Typography variant="body1">Safety Metrics:</Typography>
               <input type="file" onChange={(e) => handleFileUpload(e, "safetyMetrics")} />
-            </div>
-            <div>
-              Vehicle System Performance:
+            </Box>
+            <Box>
+              <Typography variant="body1">Vehicle System Performance:</Typography>
               <input type="file" onChange={(e) => handleFileUpload(e, "vehicleSystemPerformance")} />
-            </div>
-
-          <div className="button-info">
-            <button onClick={submitResult}>
-              { "Submit" }
-            </button>          
-          </div>
-        </>
-        }
+            </Box>
+            <Box className="button-info" mt={2}>
+              <Button variant="contained" color="primary" onClick={submitResult}>
+                Submit
+              </Button>
+            </Box>
+          </Box>        
+        ) : submitClickCount == 1 && (
+          <Box>
+            <Typography variant="body1">Simulation created successfully</Typography>
+            <Box className="button-info" mt={2}>
+              <Button variant="contained" color="primary" onClick={submitResult}>
+                Create a new simulation
+              </Button>
+            </Box>
+          </Box>
+        )
+      )}
       {currentHover === "review" &&
-        <>
-        Select a simulation result ID:
-        <div className="button-info">
-              <select  
-                value={selectedResultsId}
-                  onChange={(e) => setSelectedResultsId(e.target.value)}
-              >
-                  {dataResults.simulationResults.map(type => (
-                  <option key={type.id} value={type.id}>{type.id}</option>
-                  ))}
-              </select>        
-          </div>
-          <div>
-            Simulation Config:
-            {dataResults.simulationResults[selectedResultsId-1].simulationConfig}
-          </div>
-          <div>
-          Success:
+        <Box>
+        <Typography variant="h6">Select a simulation result ID:</Typography>
+        <Box className="button-info" marginY={2}>
+          <FormControl fullWidth variant="outlined" margin="normal">
+            <InputLabel id="simulation-result-id-label">Simulation Result ID</InputLabel>
+            <Select
+              labelId="simulation-result-id-label"
+              value={selectedResultsId}
+              onChange={(e) => setSelectedResultsId(e.target.value)}
+              label="Simulation Result ID"  // Added label prop
+            >
+              {dataResults.simulationResults.map(result => (
+                <MenuItem key={result.id} value={result.id}>
+                  {result.id}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
+        
+        <Typography variant="body1">
+          <strong>Simulation Config:</strong>
+          {dataResults.simulationResults[selectedResultsId-1].simulationConfigId}
+        </Typography>
+        <Typography variant="body1">
+          <strong>Success:</strong>
           {dataResults.simulationResults[selectedResultsId-1].navigationData}
-          </div>
-          <div> 
-          Navigation Data:
+        </Typography>
+        <Typography variant="body1">
+          <strong>Navigation Data:</strong>
           {dataResults.simulationResults[selectedResultsId-1].navigationData}
-          </div>
-          <div>
-          Safety Metrics:
+        </Typography>
+        <Typography variant="body1">
+          <strong>Safety Metrics:</strong>
           {dataResults.simulationResults[selectedResultsId-1].safetyMetrics}
-          </div>
-          <div>
-          Vehicle System Performance:
+        </Typography>
+        <Typography variant="body1">
+          <strong>Vehicle System Performance:</strong>
           {dataResults.simulationResults[selectedResultsId-1].vehicleSystemPerformance}
-          </div>
-
-        </>
-        }
-    </div>
+        </Typography>
+      </Box>    
+  }
+    </StyledContainer>
     
   );
 }

@@ -4,6 +4,8 @@ import '@testing-library/jest-dom';
 import { MockedProvider } from '@apollo/client/testing';
 import RegistrationPage, { CREATE_USER } from '../pages/RegistrationPage';
 import { screen } from '@testing-library/react';
+import { BrowserRouter as Router } from 'react-router-dom';
+
 
 
 // Improve this console and make tests for wrong inputs
@@ -42,9 +44,11 @@ const mocks = [
 
 test("renders RegistrationPage and checks if form works correctly", async () => {
   const { getByLabelText, getByRole } = render(
-    <MockedProvider mocks={mocks} addTypename={false}>
-      <RegistrationPage />
-    </MockedProvider>
+    <Router>
+      <MockedProvider mocks={mocks} addTypename={false}>
+        <RegistrationPage />
+      </MockedProvider>
+    </Router>
   );
 
   const usernameField = screen.getByLabelText(/Username/i);

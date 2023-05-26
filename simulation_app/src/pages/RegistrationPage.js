@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useMutation, gql } from '@apollo/client';
-import { Container, TextField, Button, Typography } from '@mui/material';
+import { Container, TextField, Button, Typography, Box, Link } from '@mui/material';
 import { styled } from '@mui/system';
-
+import { useNavigate } from 'react-router-dom';
 
 export const CREATE_USER = gql`
   mutation CreateUser($username: String!, $email: String!, $password: String!) {
@@ -36,6 +36,7 @@ const StyledButton = styled(Button)({
 });
 
 function RegistrationPage() {
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -45,11 +46,22 @@ function RegistrationPage() {
     event.preventDefault();
     const response = await createUser({variables: {username, email, password}});
     console.log(response);
+    navigate('/login');
   };
 
   return (
     <StyledContainer>
-      <Typography variant="h4" component="h1">Register</Typography>
+      <Typography variant="h3" component="h1" gutterBottom>
+        Welcome to our Simulation Platform
+      </Typography>
+      <Typography variant="h5" component="h2" gutterBottom>
+        Create an account
+      </Typography>
+      <Box sx={{ mt: 2 }}>
+        <Typography variant="body1">
+          Start uploading and managing your autonomous vehicle simulation tests by creating an account.
+        </Typography>
+      </Box>
       <StyledForm onSubmit={handleSubmit}>
         <TextField
           label="Username"
@@ -87,6 +99,11 @@ function RegistrationPage() {
         >
           Register
         </StyledButton>
+        <Box sx={{ mt: 2 }}>
+          <Typography variant="body1">
+            Already have an account? <Link onClick={() => navigate('/login')}>Login</Link>
+          </Typography>
+        </Box>
       </StyledForm>
     </StyledContainer>
   );

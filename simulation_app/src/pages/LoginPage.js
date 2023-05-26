@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { useMutation, gql } from '@apollo/client';
-import { Container, TextField, Button, Typography, Alert } from '@mui/material';
+import { Container, TextField, Button, Typography, Alert, Box, Link } from '@mui/material';
 import { styled } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
-
-// TODO handle errors
 
 export const LOGIN_USER = gql`
   mutation LoginUser($username: String!, $password: String!) {
@@ -18,7 +16,6 @@ export const LOGIN_USER = gql`
     }
   }
 `;
-
 
 const StyledContainer = styled(Container)({
   display: 'flex',
@@ -38,7 +35,6 @@ const StyledForm = styled('form')({
 const StyledButton = styled(Button)({
   marginTop: '20px',
 });
-
 
 function LoginPage() {
   
@@ -64,9 +60,20 @@ function LoginPage() {
     }
 
   };
+  
   return (
     <StyledContainer>
-      <Typography variant="h4" component="h1">Login</Typography>
+      <Typography variant="h3" component="h1" gutterBottom>
+        Welcome Back
+      </Typography>
+      <Typography variant="h5" component="h2" gutterBottom>
+        Login to Your Account
+      </Typography>
+      <Box sx={{ mt: 2 }}>
+        <Typography variant="body1">
+          Login to manage your autonomous vehicle simulation tests.
+        </Typography>
+      </Box>
       {errorMessage && <Alert severity="error">{errorMessage}</Alert>} {/* Display error message conditionally */}
       <StyledForm onSubmit={handleSubmit}>
         <TextField
@@ -100,6 +107,11 @@ function LoginPage() {
         >
           Login
         </StyledButton>
+        <Box sx={{ mt: 2 }}>
+          <Typography variant="body1">
+            Don't have an account yet? <Link onClick={() => navigate('/register')}>Register</Link>
+          </Typography>
+        </Box>
       </StyledForm>
     </StyledContainer>
 

@@ -17,11 +17,12 @@ app.add_url_rule(
 # Initialize db and bcrypt
 db.init_app(app)
 bcrypt.init_app(app)
+with app.app_context():
+    db.create_all()
 
 # Register blueprints
 app.register_blueprint(user_routes)
 app.register_blueprint(simulation_routes)
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
+app.run(host="0.0.0.0")
