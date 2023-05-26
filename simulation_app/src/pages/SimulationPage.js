@@ -63,7 +63,6 @@ const SIMULATION_RESULTS_QUERY = gql`
   }
 `;
 
-
 const CREATE_SIMULATION_CONFIG = gql`
   mutation CreateSimulationConfig($simulationTypeId: String!, $userId: String!, $vehicleIds: String!, $environmentalConditions: String!, $initialConditions: String!, $physicalConstants: String!, $timeSettings: String!, $trafficRules: String!, $successDefinition: String!) {
     createSimulationConfig(simulationTypeId: $simulationTypeId, userId: $userId, vehicleIds: $vehicleIds, environmentalConditions: $environmentalConditions, initialConditions: $initialConditions, physicalConstants: $physicalConstants, timeSettings: $timeSettings, trafficRules: $trafficRules, successDefinition: $successDefinition) {
@@ -85,8 +84,6 @@ const CREATE_SIMULATION_RESULT = gql`
     }
   }
 `;
-
-
 
 function SimulationPage() {
     const { loading, error, data } = useQuery(SIMULATION_TYPES_QUERY);
