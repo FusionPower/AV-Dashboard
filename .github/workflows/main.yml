@@ -27,7 +27,7 @@ jobs:
         make format
     - name: Lint 
       run: |
-        cd backend
+        cd Backend
         make lint
     - name: Test with pytest
       run: |
