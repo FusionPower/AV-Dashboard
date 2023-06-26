@@ -19,15 +19,19 @@ jobs:
    
     - name: Install dependencies
       run: |
+        cd Backend
         make install
     - name: Format code with Python black
       run: |
+        cd Backend
         make format
     - name: Lint 
       run: |
+        cd backend
         make lint
     - name: Test with pytest
       run: |
+        cd Backend
         make test
 
     - name: Set up Node.js
@@ -36,22 +40,27 @@ jobs:
         node-version: '14'
     - name: Install Node.js dependencies
       run: |
+        cd Frontend
         cd simulation_app
         npm install
     - name: Check Node.js and npm version
       run: |
+        cd Frontend
         node -v
         npm -v
     - name: Test with npm
       run: |
+        cd Frontend
         cd simulation_app
         npm test
     - name: Lint with ESLint
       run: |
+        cd Frontend
         cd simulation_app
         npx eslint .
     - name: Format with Prettier
       run: |
+        cd Frontend
         cd simulation_app
         npx prettier --write .
         npx prettier --check .
