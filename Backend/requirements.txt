@@ -5,7 +5,6 @@ black
 pytest-cov
 flask
 Flask-SQLAlchemy
-graphene
 Flask-GraphQL==2.0.1
 graphql-core==2.2.1
 graphene==2.1.8

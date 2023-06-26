@@ -9,6 +9,6 @@ format:
 	black *.py
 
 test:
-	python -m pytest -vv --cov=.
+	python -m pytest -vvv --cov=*
 	
 all: install lint test

@@ -25,4 +25,5 @@ app.register_blueprint(user_routes)
 app.register_blueprint(simulation_routes)
 
 
-app.run(host="0.0.0.0")
+if __name__ == "__main__":
+    app.run(debug=True)
